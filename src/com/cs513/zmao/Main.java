@@ -1,12 +1,13 @@
 package com.cs513.zmao;
 
 import com.cs513.zmao.entity.ClientInfo;
+import com.cs513.zmao.entity.ClientList;
+import com.cs513.zmao.service.ConnectionService;
 import com.cs513.zmao.service.InputServiceThread;
 import com.cs513.zmao.service.OutputServiceThread;
 
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Vector;
 
 public class Main {
 
@@ -17,7 +18,7 @@ public class Main {
 		ServerSocket outputServerSocket;
         Socket inputSocket;
 		Socket outputSocket;
-		Vector clientList = new Vector<ClientInfo>();
+		ClientList clientList = new ClientList();
 
 		try {
 			inputServerSocket = new ServerSocket(inputPort);
@@ -27,12 +28,17 @@ public class Main {
                 inputSocket = inputServerSocket.accept();
 				outputSocket = outputServerSocket.accept();
 				System.out.println("An user connected.");
-				ClientInfo clientInfo = new ClientInfo("ip", "user1", inputSocket, outputSocket);
-				clientList.add(clientInfo);
-				InputServiceThread inputServiceThread = new InputServiceThread(inputSocket, clientInfo, clientList);
+
+				ClientInfo clientInfo = new ClientInfo("ip", null, inputSocket, outputSocket);
+
+//				ClientInfo clientInfo = ConnectionService.initialConnections(inputSocket, outputSocket, clientList);
+//				if (clientInfo != null) {
+//					clientList.add(clientInfo);
+//				InputServiceThread inputServiceThread = new InputServiceThread(inputSocket, clientInfo, clientList);
 				OutputServiceThread outputServiceThread = new OutputServiceThread(outputSocket, clientInfo, clientList);
-				inputServiceThread.start();
+//				inputServiceThread.start();
 				outputServiceThread.start();
+//				}
 			}
 		} catch (Exception e) {
 			System.out.println("Chat server initial failed");
